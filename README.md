@@ -55,6 +55,9 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+
+import java.util.List;
 
 /**
  * User: lanxinghua
@@ -64,12 +67,23 @@ import org.apache.maven.plugins.annotations.Mojo;
 //这里的cxx就为该插件的goal
 @Mojo(name = "cxx", defaultPhase = LifecyclePhase.PACKAGE)
 public class DemoMojo extends AbstractMojo {
+    //参数配置
+    @Parameter
+    private String msg;
 
-    @Override
-    public void execute() throws MojoExecutionException, MojoFailureException{
-        System.out.println("maven插件");
+    @Parameter
+    private List<String> options;
+
+    @Parameter(property = "args")
+    private String args;
+
+    public void execute() throws MojoExecutionException, MojoFailureException {
+        System.out.println("my plugin  !!!" + msg);
+        System.out.println("my plugin  !!!" + options);
+        System.out.println("my plugin  !!!" + args);
     }
 }
+
 ```
 
 然后打包
@@ -79,10 +93,27 @@ public class DemoMojo extends AbstractMojo {
 
 ### 3项目中引用插件
 ```xml
-<plugin>
+ <plugin>
     <groupId>com.demo</groupId>
     <artifactId>my-plugin</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <configuration>
+        <msg>hello world</msg>
+        <options>
+            <option>1111</option>
+            <option>2222</option>
+        </options>
+        <args>args</args>
+    </configuration>
+    <executions>
+        <execution>
+            <id>my-plugin</id>
+            <phase>pre-clean</phase>
+            <goals>
+                <goal>cxx</goal>
+            </goals>
+        </execution>
+    </executions>
 </plugin>
 ```
 
